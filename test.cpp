@@ -5,6 +5,11 @@
 
 using namespace flt;
 
+#if defined(BUILD_MONOLITHIC)
+#define main   float_compare_test_main
+#endif
+
+extern "C"
 int main() {
 	double d1 = 3.14159;
 	double d2 = d1;
