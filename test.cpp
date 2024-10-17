@@ -10,7 +10,7 @@ using namespace flt;
 #endif
 
 extern "C"
-int main() {
+int main(void) {
 	double d1 = 3.14159;
 	double d2 = d1;
 	double d2e1 = d1 + std::nextafter(d1, std::numeric_limits<double>::lowest());
