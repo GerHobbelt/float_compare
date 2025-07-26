@@ -85,7 +85,7 @@ public:
 
 		Two objects are provided; one tests for equality to an absolute tolerance,
 		one to a scaled tolerance. The tests will handle IEEE floating point, but
-		note that infinity == infinity. Mathematicians are rolling in their graves,
+		note that infinity == infinity when you ask `same()`. Mathematicians are rolling in their graves,
 		but this matches the behaviour for the common practice of using
 		<code>DBL_MAX</code> (<code>numeric_limits<double>::max()</code>, or similar
 		large finite number) as infinity.
@@ -136,6 +136,21 @@ public:
 			if (f1 == f2)
 				return true;
 			return (fabs(f1 - f2) < epsilon_);
+		}
+
+		// https://stackoverflow.com/questions/13698927/compare-double-to-zero-using-epsilon
+
+		inline bool same(T f1, T f2)
+		{
+			if (IsNaN(f1) || IsNaN(f2))
+				return IsNaN(f1) == IsNaN(f2);
+			if (!IsFinite(f1) || !IsFinite(f2))
+				return IsFinite(f1) == IsFinite(f2);
+			if (f1 == f2)
+				return true;
+
+			return std::nextafter(f1, std::numeric_limits<T>::lowest()) <= f2
+				&& std::nextafter(f1, std::numeric_limits<T>::max()) >= f2;
 		}
 
 		/*! \name Constructors and destructors */
@@ -221,7 +236,7 @@ public:
 
 		// https://stackoverflow.com/questions/13698927/compare-double-to-zero-using-epsilon
 
-		bool same(T f1, T f2)
+		inline bool same(T f1, T f2)
 		{
 			if (IsNaN(f1) || IsNaN(f2))
 			  return IsNaN(f1) == IsNaN(f2);
@@ -230,8 +245,8 @@ public:
 			if (f1 == f2)
 				return true;
 
-			return std::nextafter(f1, std::numeric_limits<double>::lowest()) <= f2
-				&& std::nextafter(f1, std::numeric_limits<double>::max()) >= f2;
+			return std::nextafter(f1, std::numeric_limits<T>::lowest()) <= f2
+				&& std::nextafter(f1, std::numeric_limits<T>::max()) >= f2;
 		}
 
 		/*! \name Constructors and destructors */
